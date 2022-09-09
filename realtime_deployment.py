@@ -30,13 +30,12 @@ def main():
     sensor_config = load_record('data/conf.h5').session_config.sensor_config
     metadata = client.setup_session(sensor_config)
 
-    client.start_session()
-
     processor = Processor(sensor_config)
     pg_updater = PGUpdater(sensor_config, metadata)
     pg_process = PGProcess(pg_updater)
     pg_process.start()
 
+    client.start_session()
     interrupt_handler = et.utils.ExampleInterruptHandler()
 
     while not interrupt_handler.got_signal:
