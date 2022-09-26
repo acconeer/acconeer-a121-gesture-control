@@ -1,5 +1,4 @@
 import copy
-from turtle import position
 import numpy as np
 import absl.logging
 import pyqtgraph as pg
@@ -129,6 +128,10 @@ class PGUpdater:
         self.vels, self.vel_res = get_approx_fft_vels(sensor_config)
 
     def setup(self, win):
+        tr = pg.QtGui.QTransform()
+        tr.translate(self.depths_m[0], self.vels[0] - 0.5 * self.vel_res)
+        tr.scale(1, self.vel_res)
+
         self.cont_plot = win.addPlot()
         self.cont_plot.setMenuEnabled(False)
         self.cont_plot.setLabel("bottom", "Time[Frame]")
@@ -136,9 +139,7 @@ class PGUpdater:
         self.cont_im = pg.ImageItem(autoDownsample=True)
         self.cont_im.setLookupTable(et.utils.pg_mpl_cmap("viridis"))
         self.cont_plot.addItem(self.cont_im)
-        self.cont_im.resetTransform()
-        self.cont_im.translate(self.depths_m[0], self.vels[0] - 0.5 * self.vel_res)
-        self.cont_im.scale(1, self.vel_res)
+        self.cont_im.setTransform(tr)
 
         win.nextRow()
 
@@ -149,7 +150,7 @@ class PGUpdater:
         self.ft_im = pg.ImageItem(autoDownsample=True)
         self.ft_im.setLookupTable(et.utils.pg_mpl_cmap("viridis"))
         self.ft_plot.addItem(self.ft_im)
-        self.ft_im.resetTransform()
+        self.ft_im.setTransform(tr)
 
         self.html = (
             '<div style="text-align: center">'
@@ -161,8 +162,6 @@ class PGUpdater:
         self.ft_plot.addItem(self.text_item)
         self.text_item.show()
 
-        self.ft_im.translate(self.depths_m[0], self.vels[0] - 0.5 * self.vel_res)
-        self.ft_im.scale(1, self.vel_res)
 
     def update(self, d):
         self.cont_im.updateImage(np.flipud(d["fifo_cont"]), levels=(0, 1.05 * np.max(d["fifo_cont"])))
