@@ -125,7 +125,7 @@ class Processor:
 class PGUpdater:
     def __init__(self, sensor_config, metadata):
         self.depths_m, self.step_length_m = get_distances_m(sensor_config, metadata)
-        self.vels, self.vel_res = get_approx_fft_vels(sensor_config)
+        self.vels, self.vel_res = get_approx_fft_vels(metadata, sensor_config)
 
     def setup(self, win):
         tr = pg.QtGui.QTransform()
