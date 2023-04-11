@@ -47,6 +47,7 @@ def extract_features(filepaths):
 
         # load data
         record = load_record(filepath)
+        metadata = record.metadata
         data_frames = record.frames
         data_frames = data_frames.squeeze()
         (nbr_frames, _, _) = data_frames.shape
@@ -68,7 +69,7 @@ def extract_features(filepaths):
             features.append(feature)
             data_labels.append(label)
 
-    vels, _ = get_approx_fft_vels(sensor_config)
+    vels, _ = get_approx_fft_vels(metadata, sensor_config)
     return features, data_labels, vels
 
 
